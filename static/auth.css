@@ -1,0 +1,98 @@
+/* ====== Global ====== */
+body {
+    margin: 0;
+    font-family: "Segoe UI", Arial, sans-serif;
+    background: #f0f2f5;
+    height: 100vh;
+}
+
+/* ====== Main Wrapper ====== */
+.auth-wrapper {
+    display: flex;
+    height: 100vh;
+}
+
+/* ====== Left Image Section ====== */
+.auth-image {
+    flex: 1;
+    background: url("/static/images/traffic.png") no-repeat center center;
+    background-size: cover;
+}
+
+/* ====== Right Form Section ====== */
+.auth-form {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: white;
+}
+
+/* ====== Card ====== */
+.auth-container {
+    width: 360px;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+}
+
+/* ====== Title ====== */
+.auth-container h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #2a5298;
+}
+
+/* ====== Inputs ====== */
+.auth-container input,
+.auth-container select {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 12px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+}
+
+/* ====== Button ====== */
+.auth-container button {
+    width: 100%;
+    padding: 10px;
+    background: #2a5298;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 15px;
+    cursor: pointer;
+}
+
+.auth-container button:hover {
+    background: #1e3c72;
+}
+
+/* ====== Links ====== */
+.auth-container p {
+    text-align: center;
+    margin-top: 15px;
+    font-size: 14px;
+}
+
+.auth-container a {
+    color: #2a5298;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.auth-container a:hover {
+    text-decoration: underline;
+}
+
+/* ====== Mobile Responsive ====== */
+@media (max-width: 768px) {
+    .auth-image {
+        display: none;
+    }
+    .auth-form {
+        flex: 1;
+    }
+}

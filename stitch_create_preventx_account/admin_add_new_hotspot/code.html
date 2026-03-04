@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>PreventX Admin - Add Hotspot</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#13ec5b",
+                        "background-light": "#f6f8f6",
+                        "background-dark": "#102216",
+                    },
+                    fontFamily: {
+                        "display": ["Inter"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 antialiased">
+<!-- Main Container (Mobile Form Factor) -->
+<div class="relative flex h-auto min-h-screen w-full flex-col overflow-x-hidden max-w-[480px] mx-auto bg-background-light dark:bg-background-dark">
+<!-- Top App Bar -->
+<div class="flex items-center px-4 py-4 sticky top-0 z-10 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md">
+<button class="flex size-10 items-center justify-center rounded-full hover:bg-slate-200 dark:hover:bg-primary/20 transition-colors">
+<span class="material-symbols-outlined">arrow_back</span>
+</button>
+<h2 class="text-lg font-bold flex-1 text-center pr-10">Add New Hotspot</h2>
+</div>
+<div class="flex flex-col gap-6 p-4">
+<!-- Location Name -->
+<div class="flex flex-col gap-2">
+<label class="text-sm font-medium text-slate-600 dark:text-primary">Location Name</label>
+<input class="w-full rounded-lg border border-slate-300 dark:border-primary/30 bg-white dark:bg-primary/5 p-4 text-base focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all dark:placeholder:text-slate-500" placeholder="e.g., Intersection of 5th and Main" type="text"/>
+</div>
+<!-- Coordinates Row -->
+<div class="grid grid-cols-2 gap-4">
+<div class="flex flex-col gap-2">
+<label class="text-sm font-medium text-slate-600 dark:text-primary">Latitude</label>
+<input class="w-full rounded-lg border border-slate-300 dark:border-primary/30 bg-white dark:bg-primary/5 p-4 text-base focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all dark:placeholder:text-slate-500" placeholder="0.0000" type="text"/>
+</div>
+<div class="flex flex-col gap-2">
+<label class="text-sm font-medium text-slate-600 dark:text-primary">Longitude</label>
+<input class="w-full rounded-lg border border-slate-300 dark:border-primary/30 bg-white dark:bg-primary/5 p-4 text-base focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all dark:placeholder:text-slate-500" placeholder="0.0000" type="text"/>
+</div>
+</div>
+<!-- Severity Dropdown -->
+<div class="flex flex-col gap-2">
+<label class="text-sm font-medium text-slate-600 dark:text-primary">Severity Level</label>
+<div class="relative">
+<select class="w-full appearance-none rounded-lg border border-slate-300 dark:border-primary/30 bg-white dark:bg-primary/5 p-4 text-base focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all">
+<option value="low">Low Risk</option>
+<option value="medium">Medium Risk</option>
+<option value="high">High Risk</option>
+<option value="critical">Critical</option>
+</select>
+<div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4">
+<span class="material-symbols-outlined text-slate-400">expand_more</span>
+</div>
+</div>
+</div>
+<!-- Description Area -->
+<div class="flex flex-col gap-2">
+<label class="text-sm font-medium text-slate-600 dark:text-primary">Description</label>
+<textarea class="w-full rounded-lg border border-slate-300 dark:border-primary/30 bg-white dark:bg-primary/5 p-4 text-base focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all dark:placeholder:text-slate-500" placeholder="Describe the historical accidents or specific risks..." rows="3"></textarea>
+</div>
+<!-- Map Widget Section -->
+<div class="flex flex-col gap-3 pt-2">
+<div class="flex items-center justify-between">
+<h3 class="text-base font-bold">Pick on Map</h3>
+<span class="text-xs text-primary font-medium flex items-center gap-1">
+<span class="material-symbols-outlined text-sm">my_location</span> Use GPS
+                    </span>
+</div>
+<div class="relative w-full aspect-video rounded-xl overflow-hidden border border-slate-200 dark:border-primary/20 shadow-lg">
+<div class="w-full h-full bg-cover bg-center" data-alt="Interactive city map for hotspot selection" data-location="New York City" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCVRNqo4DjEWUk1z6oArpagDFIsSceBJLF5YIZv4RzmI6qbysZ8vCwmXEUk9CM4fOmsO9Y1YzZQ9fDIGy6SggKc5YcpbfG6g46F9QXk-ZrPatCR-6hHtd7G_k5HWa1IyGqJKwmUoGjMqf0uwNAAOAdrdOEZoXxx1i56zdfO5vVCLOpLyFiolUKpAVwOgIbeVmiC9gz5vQL2s8JS6s-jXGHFodyvpi7UiXo9AOR2Xqxbasr2jpm-YRsJAjyG5dZSl0tj60J6djxFkrQ");'></div>
+<!-- Map Pin Overlay -->
+<div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+<span class="material-symbols-outlined text-red-500 text-4xl mb-8 filter drop-shadow-md">location_on</span>
+</div>
+<!-- Zoom Controls -->
+<div class="absolute bottom-3 right-3 flex flex-col gap-1">
+<button class="bg-white dark:bg-background-dark size-8 flex items-center justify-center rounded-lg border border-slate-200 dark:border-primary/20 shadow-sm">
+<span class="material-symbols-outlined text-sm">add</span>
+</button>
+<button class="bg-white dark:bg-background-dark size-8 flex items-center justify-center rounded-lg border border-slate-200 dark:border-primary/20 shadow-sm">
+<span class="material-symbols-outlined text-sm">remove</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Footer Action Button -->
+<div class="pt-6 pb-10">
+<button class="w-full bg-primary hover:bg-primary/90 text-background-dark font-bold text-lg py-4 rounded-xl shadow-xl shadow-primary/20 transition-all flex items-center justify-center gap-2">
+<span class="material-symbols-outlined">save</span>
+                    Save Hotspot
+                </button>
+<p class="text-center text-xs text-slate-500 mt-4">
+                    The hotspot will be instantly available for risk predictions after saving.
+                </p>
+</div>
+</div>
+</div>
+</body></html>

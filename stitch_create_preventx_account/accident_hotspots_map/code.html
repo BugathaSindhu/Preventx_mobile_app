@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Accident Hotspots Map - PreventX</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#13ec5b",
+                        "background-light": "#f6f8f6",
+                        "background-dark": "#102216",
+                    },
+                    fontFamily: {
+                        "display": ["Inter"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .filled-icon {
+            font-variation-settings: 'FILL' 1;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 antialiased overflow-x-hidden">
+<div class="relative flex h-screen w-full flex-col bg-background-light dark:bg-background-dark overflow-hidden">
+<!-- Header -->
+<header class="flex items-center justify-between px-4 pt-6 pb-2 bg-background-light dark:bg-background-dark border-b border-slate-200 dark:border-primary/10">
+<button class="flex size-10 items-center justify-center rounded-full hover:bg-slate-100 dark:hover:bg-primary/10">
+<span class="material-symbols-outlined text-slate-900 dark:text-slate-100">arrow_back_ios_new</span>
+</button>
+<h1 class="text-lg font-bold leading-tight tracking-tight flex-1 text-center font-display">Accident Hotspots</h1>
+<button class="flex size-10 items-center justify-center rounded-full hover:bg-slate-100 dark:hover:bg-primary/10">
+<span class="material-symbols-outlined text-slate-900 dark:text-slate-100">search</span>
+</button>
+</header>
+<!-- View Switcher -->
+<div class="px-4 py-3">
+<div class="flex h-11 flex-1 items-center justify-center rounded-xl bg-slate-200 dark:bg-primary/5 p-1 border border-slate-300 dark:border-primary/20">
+<label class="flex cursor-pointer h-full grow items-center justify-center rounded-lg px-2 bg-white dark:bg-primary shadow-sm text-slate-900 dark:text-background-dark text-sm font-semibold transition-all">
+<input checked="" class="hidden" name="view-toggle" type="radio"/>
+<span class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">map</span>
+                        Map View
+                    </span>
+</label>
+<label class="flex cursor-pointer h-full grow items-center justify-center rounded-lg px-2 text-slate-600 dark:text-primary/70 text-sm font-medium hover:text-slate-900 dark:hover:text-primary transition-all">
+<input class="hidden" name="view-toggle" type="radio"/>
+<span class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">list</span>
+                        List View
+                    </span>
+</label>
+</div>
+</div>
+<!-- Filter Bar -->
+<div class="flex gap-3 px-4 pb-4 overflow-x-auto no-scrollbar">
+<button class="flex h-9 shrink-0 items-center justify-center gap-x-2 rounded-full bg-red-500/10 dark:bg-red-500/20 px-4 border border-red-500/30">
+<div class="size-2 rounded-full bg-red-500"></div>
+<p class="text-red-600 dark:text-red-400 text-xs font-semibold">High Risk</p>
+<span class="material-symbols-outlined text-[16px] text-red-600 dark:text-red-400">expand_more</span>
+</button>
+<button class="flex h-9 shrink-0 items-center justify-center gap-x-2 rounded-full bg-orange-500/10 dark:bg-orange-500/20 px-4 border border-orange-500/30">
+<div class="size-2 rounded-full bg-orange-500"></div>
+<p class="text-orange-600 dark:text-orange-400 text-xs font-semibold">Medium</p>
+<span class="material-symbols-outlined text-[16px] text-orange-600 dark:text-orange-400">expand_more</span>
+</button>
+<button class="flex h-9 shrink-0 items-center justify-center gap-x-2 rounded-full bg-yellow-500/10 dark:bg-yellow-500/20 px-4 border border-yellow-500/30">
+<div class="size-2 rounded-full bg-yellow-500"></div>
+<p class="text-yellow-600 dark:text-yellow-400 text-xs font-semibold">Low Risk</p>
+<span class="material-symbols-outlined text-[16px] text-yellow-600 dark:text-yellow-400">expand_more</span>
+</button>
+</div>
+<!-- Main Map Area -->
+<main class="relative flex-1 bg-slate-100 dark:bg-background-dark overflow-hidden">
+<!-- Map Placeholder -->
+<div class="absolute inset-0 z-0 bg-cover bg-center" data-alt="Dark stylized city map with glowing route lines" data-location="San Francisco City Center" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCmGUIoWK4HlRnt0nsGGnlTZPDWLMUykD6IuFuceVp1OQLZcOHgsiA7DiGrov7TCbR4hz0PL3Jkry_DsEo17aWm0lEE9Yq5egxlSVnkp87yurTDQiz1LOf_00dEGQCCKBmRO3smGWte8LKDStkZxQiPn1ksXWAGQ9qOV_vI1QGYMiyhOz9cJ_BA0hBkXOqQ6Mrmof72SQwH-0r_Ih8a11-EcvhEI0BLjfNJkxEVTfowxJuQjUYMvLi1cJbxE4Cn4vjxh5Shhjco0xM');">
+<!-- Mock Map Markers -->
+<div class="absolute top-1/4 left-1/3 group cursor-pointer">
+<div class="flex flex-col items-center">
+<div class="bg-red-500 text-white rounded-full p-2 shadow-lg shadow-red-500/40 ring-4 ring-red-500/20">
+<span class="material-symbols-outlined filled-icon">warning</span>
+</div>
+<div class="mt-2 bg-background-dark/90 text-white text-[10px] px-2 py-1 rounded border border-red-500/50 backdrop-blur-md">
+                            Market St.
+                        </div>
+</div>
+</div>
+<div class="absolute top-1/2 right-1/4 group cursor-pointer">
+<div class="flex flex-col items-center">
+<div class="bg-orange-500 text-white rounded-full p-2 shadow-lg shadow-orange-500/40 ring-4 ring-orange-500/20">
+<span class="material-symbols-outlined filled-icon">report_problem</span>
+</div>
+<div class="mt-2 bg-background-dark/90 text-white text-[10px] px-2 py-1 rounded border border-orange-500/50 backdrop-blur-md">
+                            Valencia St.
+                        </div>
+</div>
+</div>
+<div class="absolute bottom-1/3 left-1/2 group cursor-pointer">
+<div class="flex flex-col items-center">
+<div class="bg-primary text-background-dark rounded-full p-2 shadow-lg shadow-primary/40 ring-4 ring-primary/20">
+<span class="material-symbols-outlined filled-icon text-[18px]">info</span>
+</div>
+<div class="mt-2 bg-background-dark/90 text-white text-[10px] px-2 py-1 rounded border border-primary/50 backdrop-blur-md">
+                            Mission St.
+                        </div>
+</div>
+</div>
+<!-- Cluster Marker -->
+<div class="absolute top-[40%] right-[45%]">
+<div class="flex items-center justify-center size-14 rounded-full bg-red-600/30 border border-red-500/50 animate-pulse">
+<div class="flex items-center justify-center size-8 rounded-full bg-red-600 text-white font-bold text-sm shadow-xl">12</div>
+</div>
+</div>
+</div>
+<!-- Map Controls -->
+<div class="absolute right-4 bottom-24 flex flex-col gap-3">
+<div class="flex flex-col rounded-xl overflow-hidden shadow-xl bg-white dark:bg-background-dark border border-slate-200 dark:border-primary/20">
+<button class="flex size-11 items-center justify-center hover:bg-slate-100 dark:hover:bg-primary/10 border-b border-slate-100 dark:border-primary/10">
+<span class="material-symbols-outlined text-slate-700 dark:text-primary">add</span>
+</button>
+<button class="flex size-11 items-center justify-center hover:bg-slate-100 dark:hover:bg-primary/10">
+<span class="material-symbols-outlined text-slate-700 dark:text-primary">remove</span>
+</button>
+</div>
+<button class="flex size-11 items-center justify-center rounded-xl bg-primary text-background-dark shadow-xl hover:opacity-90 transition-all">
+<span class="material-symbols-outlined filled-icon">near_me</span>
+</button>
+</div>
+<!-- Floating Search/Quick Info Overlay (Lower Section) -->
+<div class="absolute bottom-4 inset-x-4">
+<div class="bg-white/90 dark:bg-background-dark/90 backdrop-blur-lg rounded-2xl p-4 border border-slate-200 dark:border-primary/20 shadow-2xl">
+<div class="flex items-center gap-3">
+<div class="flex flex-col gap-1 flex-1">
+<p class="text-xs text-slate-500 dark:text-primary/60 font-medium">Nearest High Risk Area</p>
+<h3 class="text-sm font-bold text-slate-900 dark:text-slate-100">Junction of Market &amp; 5th St.</h3>
+</div>
+<div class="bg-red-500/10 px-2 py-1 rounded-lg">
+<span class="text-[10px] font-bold text-red-500 uppercase">0.4 miles away</span>
+</div>
+<button class="bg-primary size-10 flex items-center justify-center rounded-full text-background-dark">
+<span class="material-symbols-outlined">directions</span>
+</button>
+</div>
+</div>
+</div>
+</main>
+<!-- Navigation Bar -->
+<nav class="flex border-t border-slate-200 dark:border-primary/10 bg-white dark:bg-background-dark px-4 pb-8 pt-2">
+<a class="flex flex-1 flex-col items-center justify-center gap-1 text-slate-400 dark:text-primary/40" href="#">
+<span class="material-symbols-outlined text-[24px]">home</span>
+<p class="text-[10px] font-medium leading-normal">Home</p>
+</a>
+<a class="flex flex-1 flex-col items-center justify-center gap-1 text-primary" href="#">
+<span class="material-symbols-outlined filled-icon text-[24px]">map</span>
+<p class="text-[10px] font-bold leading-normal">Hotspots</p>
+</a>
+<a class="flex flex-1 flex-col items-center justify-center gap-1 text-slate-400 dark:text-primary/40" href="#">
+<span class="material-symbols-outlined text-[24px]">notifications</span>
+<p class="text-[10px] font-medium leading-normal">Alerts</p>
+</a>
+<a class="flex flex-1 flex-col items-center justify-center gap-1 text-slate-400 dark:text-primary/40" href="#">
+<span class="material-symbols-outlined text-[24px]">person</span>
+<p class="text-[10px] font-medium leading-normal">Profile</p>
+</a>
+</nav>
+</div>
+</body></html>

@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>PreventX - Add Accident Record</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&display=swap"
+        rel="stylesheet" />
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#13ec5b",
+                        "background-light": "#f6f8f6",
+                        "background-dark": "#102216",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    }
+                },
+            },
+        }
+    </script>
+</head>
+
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 font-display">
+    <div class="relative flex min-h-screen w-full flex-col overflow-x-hidden">
+
+        <!-- Header -->
+        <header
+            class="flex items-center justify-between px-4 pt-6 pb-2 border-b border-slate-200 dark:border-primary/10">
+            <div class="flex items-center gap-3">
+                <button onclick="window.location.href='/admin'"
+                    class="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-primary hover:bg-primary/20 transition">
+                    <span class="material-symbols-outlined">arrow_back</span>
+                </button>
+                <div>
+                    <h1 class="text-lg font-bold leading-tight tracking-tight">Add Record</h1>
+                    <p class="text-xs text-slate-500 dark:text-primary/70">Traffic Accident DB</p>
+                </div>
+            </div>
+        </header>
+
+        <main class="flex-1 flex flex-col p-4 gap-6 mt-4 max-w-lg mx-auto w-full">
+
+            <div class="px-2 py-2 text-center mb-2">
+                <h2 class="text-2xl font-bold dark:text-white">New Accident Data</h2>
+                <p class="text-sm text-slate-500 dark:text-primary/70">Manually insert coordinates to improve hotspot
+                    accuracy</p>
+            </div>
+
+            <!-- Add Accident Form -->
+            <form method="POST"
+                class="flex flex-col gap-5 bg-white dark:bg-primary/5 border border-slate-200 dark:border-primary/20 p-6 rounded-2xl shadow-lg">
+
+                <div class="flex flex-col gap-2">
+                    <label
+                        class="text-sm font-medium text-slate-700 dark:text-slate-300 uppercase tracking-wide text-xs">Latitude</label>
+                    <div class="relative group">
+                        <span
+                            class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary transition-colors">location_on</span>
+                        <input name="latitude" type="number" step="any"
+                            class="w-full pl-12 pr-4 h-14 rounded-xl border-slate-200 dark:border-primary/20 bg-white dark:bg-primary/5 text-slate-900 dark:text-white placeholder-slate-400 focus:ring-1 focus:ring-primary focus:border-primary transition-all"
+                            placeholder="16.506174" required />
+                    </div>
+                </div>
+
+                <div class="flex flex-col gap-2">
+                    <label
+                        class="text-sm font-medium text-slate-700 dark:text-slate-300 uppercase tracking-wide text-xs">Longitude</label>
+                    <div class="relative group">
+                        <span
+                            class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary transition-colors">location_on</span>
+                        <input name="longitude" type="number" step="any"
+                            class="w-full pl-12 pr-4 h-14 rounded-xl border-slate-200 dark:border-primary/20 bg-white dark:bg-primary/5 text-slate-900 dark:text-white placeholder-slate-400 focus:ring-1 focus:ring-primary focus:border-primary transition-all"
+                            placeholder="80.648015" required />
+                    </div>
+                </div>
+
+                <div class="flex flex-col gap-2">
+                    <label
+                        class="text-sm font-medium text-slate-700 dark:text-slate-300 uppercase tracking-wide text-xs">Accident
+                        Severity</label>
+                    <div class="relative group">
+                        <span
+                            class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary transition-colors">warning</span>
+                        <select name="accident_severity"
+                            class="form-select w-full pl-12 pr-4 h-14 rounded-xl border-slate-200 dark:border-primary/20 bg-white dark:bg-primary/5 text-slate-900 dark:text-white focus:ring-1 focus:ring-primary focus:border-primary transition-all pb-1"
+                            required>
+                            <option value="Minor" class="text-black">Minor</option>
+                            <option value="Serious" class="text-black">Serious</option>
+                            <option value="Fatal" class="text-black">Fatal</option>
+                        </select>
+                    </div>
+                </div>
+
+                <button type="submit"
+                    class="w-full h-14 mt-4 bg-primary hover:bg-primary/90 text-background-dark font-bold rounded-xl shadow-lg shadow-primary/20 transition-all active:scale-[0.98] flex items-center justify-center gap-2">
+                    <span class="material-symbols-outlined">save</span>
+                    Save Accident Record
+                </button>
+            </form>
+
+        </main>
+
+    </div>
+</body>
+
+</html>

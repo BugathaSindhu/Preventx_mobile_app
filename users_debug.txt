@@ -1,0 +1,4 @@
+(1, 'vudayana sarayu', 'vudayanasarayu@gmail.com', '+918019963155', 'sarayu', 'user')
+(2, 'Boddu Pravalika', 'boddupravalika858@gmail.com', '+917815814974', 'pravalika', 'user')
+(3, 'BUGATHA SINDHU', 'bugathasindhu@gmail.com', '+918919219686', 'SINDHU', 'admin')
+(4, 'Ankita', 'ankitapeddakota926@gmail.com', '8074298028', 'Ankita', 'user')

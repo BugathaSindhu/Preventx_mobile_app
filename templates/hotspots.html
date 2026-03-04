@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>AI Safe Route Navigation - PreventX</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&display=swap"
+        rel="stylesheet" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#13ec5b",
+                        "background-light": "#f6f8f6",
+                        "background-dark": "#102216",
+                    },
+                    fontFamily: {
+                        "display": ["Inter"]
+                    }
+                },
+            },
+        }
+    </script>
+    <style>
+        .leaflet-container {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
+
+<body
+    class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 antialiased overflow-hidden">
+    <div class="relative flex h-screen w-full flex-col bg-background-light dark:bg-background-dark overflow-hidden">
+
+        <!-- Header -->
+        <header
+            class="flex items-center justify-between px-4 pt-6 pb-2 bg-background-light/90 dark:bg-background-dark/90 backdrop-blur-md border-b border-slate-200 dark:border-primary/10 z-10">
+            <button onclick="window.history.back()"
+                class="flex h-10 w-10 items-center justify-center rounded-full hover:bg-slate-200 dark:hover:bg-primary/10 transition">
+                <span class="material-symbols-outlined text-slate-900 dark:text-slate-100">arrow_back_ios_new</span>
+            </button>
+            <h1 class="text-lg font-bold leading-tight tracking-tight flex-1 text-center font-display">Accident Hotspots
+            </h1>
+            <button class="flex h-10 w-10 items-center justify-center rounded-full opacity-0 cursor-default">
+                <!-- empty space for balance -->
+            </button>
+        </header>
+
+        <!-- 🚨 Danger Warning -->
+        <div id="warning"
+            class="hidden absolute top-20 left-4 right-4 bg-red-600/90 text-white p-3 rounded-lg text-center font-bold shadow-lg z-[1000] backdrop-blur-sm shadow-red-500/20 border border-red-500/50">
+            ⚠️ HIGH accident risk hotspot detected! Enter destination for safer route
+        </div>
+
+        <!-- Main Map Area -->
+        <main class="relative flex-1 bg-slate-100 dark:bg-background-dark z-0">
+            <!-- Leaflet Map -->
+            <div id="map" class="absolute inset-0 z-0"></div>
+
+            <!-- 🛣 Safe Route Panel -->
+            <div id="routePanel"
+                class="hidden flex flex-col absolute top-4 right-4 left-4 sm:left-auto sm:w-80 bg-white/95 dark:bg-background-dark/95 backdrop-blur-md p-4 rounded-xl shadow-2xl border border-slate-200 dark:border-primary/20 z-[1000]">
+                <div class="flex items-center gap-2 mb-3">
+                    <span class="material-symbols-outlined text-primary">directions_car</span>
+                    <b class="text-sm dark:text-white">AI Safe Navigation</b>
+                </div>
+                <div class="flex flex-col gap-2">
+                    <input type="text" id="destination" placeholder="Enter destination (e.g. Rajam)"
+                        class="w-full h-10 px-3 rounded-lg text-sm bg-white dark:bg-primary/5 border border-slate-200 dark:border-primary/20 text-slate-900 dark:text-white placeholder-slate-400 focus:ring-1 focus:ring-primary focus:border-primary">
+                    <button onclick="generateSafeRoute()"
+                        class="w-full h-10 bg-primary hover:bg-primary/90 text-background-dark font-bold rounded-lg text-sm transition-all flex items-center justify-center gap-2 cursor-pointer">
+                        <span class="material-symbols-outlined text-[18px]">route</span>
+                        Generate Safest Route
+                    </button>
+                    <button onclick="clearRoute()"
+                        class="w-full h-10 bg-slate-200 dark:bg-white/10 hover:bg-slate-300 dark:hover:bg-white/20 text-slate-700 dark:text-slate-300 font-bold rounded-lg text-sm transition-all flex items-center justify-center gap-2 cursor-pointer">
+                        <span class="material-symbols-outlined text-[18px]">close</span>
+                        Clear Route
+                    </button>
+                </div>
+            </div>
+
+            <!-- Floating Search/Quick Info Overlay (Lower Section) -->
+            <div
+                class="absolute bottom-6 left-4 right-4 sm:left-auto sm:w-96 flex flex-col gap-4 z-[1000] pointer-events-none">
+                <!-- 🗺 Legend -->
+                <div id="legend"
+                    class="bg-white/90 dark:bg-background-dark/90 backdrop-blur-lg rounded-xl p-3 border border-slate-200 dark:border-primary/20 shadow-xl self-end text-xs text-slate-600 dark:text-slate-300 flex flex-col gap-1 w-48 pointer-events-auto">
+                    <b class="text-slate-900 dark:text-white mb-1">Legend</b>
+                    <span class="flex items-center gap-2">
+                        <div class="w-3 h-1 bg-blue-500 rounded"></div> AI Safest Route
+                    </span>
+                    <span class="flex items-center gap-2">
+                        <div class="w-3 h-3 bg-red-500 rounded-full opacity-50"></div> Hotspot Zones
+                    </span>
+                    <span class="flex items-center gap-2"><span
+                            class="material-symbols-outlined text-[14px] text-primary">my_location</span> Your Live
+                        Location</span>
+                </div>
+
+                <!-- 📊 Live GPS & Risk Box -->
+                <div id="riskBox"
+                    class="bg-white/95 dark:bg-background-dark/95 backdrop-blur-xl rounded-xl p-4 border border-slate-200 dark:border-primary/20 shadow-2xl text-xs sm:text-sm font-medium whitespace-pre-line text-slate-700 dark:text-slate-200 min-h-[80px] pointer-events-auto">
+                    📍 Initializing GPS...
+                </div>
+            </div>
+        </main>
+
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <script>
+        /* ===============================
+           MAP INITIALIZATION
+        =============================== */
+        const map = L.map("map").setView([16.5, 80.6], 7);
+
+        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+            attribution: "© OpenStreetMap"
+        }).addTo(map);
+
+        let hotspots = [];
+        let userMarker = null;
+        let routeLayer = null;
+        let lastPredictionTime = 0;
+
+        /* ===============================
+           LOAD HOTSPOTS FROM FLASK
+        =============================== */
+        fetch("/api/hotspots")
+            .then(res => res.json())
+            .then(data => {
+                hotspots = data;
+
+                hotspots.forEach(h => {
+                    L.circle([h.latitude, h.longitude], {
+                        radius: 500,
+                        color: "red",
+                        fillColor: "#ff0000",
+                        fillOpacity: 0.35
+                    }).addTo(map).bindPopup("🚨 Accident Hotspot");
+                });
+            })
+            .catch(err => console.error("Hotspot loading error:", err));
+
+        /* ===============================
+           DISTANCE (HAVERSINE)
+        =============================== */
+        function distance(lat1, lon1, lat2, lon2) {
+            const R = 6371000;
+            const dLat = (lat2 - lat1) * Math.PI / 180;
+            const dLon = (lon2 - lon1) * Math.PI / 180;
+
+            const a =
+                Math.sin(dLat / 2) ** 2 +
+                Math.cos(lat1 * Math.PI / 180) *
+                Math.cos(lat2 * Math.PI / 180) *
+                Math.sin(dLon / 2) ** 2;
+
+            return R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)));
+        }
+
+        /* ===============================
+           AUTO GPS PERMISSION + TRACKING
+        =============================== */
+        window.addEventListener("load", () => {
+            initializeLocationSystem();
+        });
+
+        async function initializeLocationSystem() {
+            const riskBox = document.getElementById("riskBox");
+
+            if (!navigator.geolocation) {
+                riskBox.innerText = "❌ Geolocation not supported by browser";
+                return;
+            }
+
+            try {
+                if (navigator.permissions) {
+                    const permission = await navigator.permissions.query({
+                        name: "geolocation"
+                    });
+
+                    if (permission.state === "granted") {
+                        startLiveTracking();
+                    }
+                    else if (permission.state === "prompt") {
+                        requestLocationAccess();
+                    }
+                    else {
+                        handleLocationDenied();
+                    }
+                } else {
+                    requestLocationAccess();
+                }
+            } catch (e) {
+                requestLocationAccess();
+            }
+        }
+
+        function requestLocationAccess() {
+            const riskBox = document.getElementById("riskBox");
+            riskBox.innerText = "📍 Requesting location access... Please allow GPS";
+
+            navigator.geolocation.getCurrentPosition(
+                () => startLiveTracking(),
+                (error) => showLocationError(error),
+                {
+                    enableHighAccuracy: true,
+                    timeout: 15000,
+                    maximumAge: 0
+                }
+            );
+        }
+
+        function startLiveTracking() {
+            const riskBox = document.getElementById("riskBox");
+
+            navigator.geolocation.watchPosition(
+                (pos) => {
+                    const lat = pos.coords.latitude;
+                    const lon = pos.coords.longitude;
+                    const accuracy = pos.coords.accuracy;
+
+                    let accuracyMsg = "";
+                    if (accuracy <= 20) accuracyMsg = "🟢 High Accuracy GPS";
+                    else if (accuracy <= 100) accuracyMsg = "🟡 Moderate Accuracy";
+                    else accuracyMsg = "🔴 Low Accuracy (Use Mobile for best GPS)";
+
+                    riskBox.innerText =
+                        `${accuracyMsg}\n📍 Lat: ${lat.toFixed(5)}\n📍 Lon: ${lon.toFixed(5)}\n🎯 Accuracy: ${Math.round(accuracy)} meters`;
+
+                    if (!userMarker) {
+                        userMarker = L.marker([lat, lon])
+                            .addTo(map)
+                            .bindPopup("📍 Your Live Location")
+                            .openPopup();
+
+                        map.setView([lat, lon], 14);
+                    } else {
+                        userMarker.setLatLng([lat, lon]);
+                    }
+
+                    checkHotspotZone(lat, lon);
+                    predictLiveRisk(lat, lon);
+                },
+                (error) => showLocationError(error),
+                {
+                    enableHighAccuracy: true,
+                    maximumAge: 0,
+                    timeout: 20000
+                }
+            );
+        }
+
+        /* ===============================
+           HOTSPOT DETECTION
+        =============================== */
+        function checkHotspotZone(lat, lon) {
+            let inside = false;
+
+            hotspots.forEach(h => {
+                if (distance(lat, lon, h.latitude, h.longitude) <= 500) {
+                    inside = true;
+                }
+            });
+
+            const routePanel = document.getElementById("routePanel");
+            const warning = document.getElementById("warning");
+
+            if (inside) {
+                warning.classList.remove("hidden");
+                routePanel.classList.remove("hidden");
+                routePanel.style.display = 'flex';
+            } else {
+                warning.classList.add("hidden");
+                routePanel.style.display = 'none';
+            }
+        }
+
+        /* ===============================
+           LIVE ML RISK PREDICTION
+        =============================== */
+        function predictLiveRisk(lat, lon) {
+            const now = Date.now();
+            if (now - lastPredictionTime < 5000) return;
+            lastPredictionTime = now;
+
+            fetch("/predict", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ latitude: lat, longitude: lon })
+            })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.error) return;
+                    document.getElementById("riskBox").innerText +=
+                        `\n🚦 Risk: ${data.severity} (Conf: ${data.confidence})`;
+                })
+                .catch(err => console.error("Prediction error:", err));
+        }
+
+        /* ===============================
+           AI SAFE ROUTE (HOTSPOT AVOID)
+        =============================== */
+        async function generateSafeRoute() {
+            if (!userMarker) {
+                alert("Waiting for GPS location...");
+                return;
+            }
+
+            const dest = document.getElementById("destination").value;
+            if (!dest) {
+                alert("Enter a destination");
+                return;
+            }
+
+            const user = userMarker.getLatLng();
+
+            const geoRes = await fetch("/predict-place", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ place: dest })
+            });
+
+            const geoData = await geoRes.json();
+            if (geoData.error) return alert("Destination not found");
+
+            const destLat = geoData.latitude;
+            const destLon = geoData.longitude;
+
+            let url = `https://router.project-osrm.org/route/v1/driving/${user.lng},${user.lat};${destLon},${destLat}?overview=full&geometries=geojson`;
+            let res = await fetch(url);
+            let data = await res.json();
+
+            if (!data.routes.length) return alert("No route found");
+
+            let route = data.routes[0].geometry;
+            drawRoute(route, "blue");
+        }
+
+        function drawRoute(geometry, color) {
+            if (routeLayer) map.removeLayer(routeLayer);
+            routeLayer = L.geoJSON(geometry, {
+                style: { color: color, weight: 6 }
+            }).addTo(map);
+            map.fitBounds(routeLayer.getBounds());
+        }
+
+        function clearRoute() {
+            if (routeLayer) {
+                map.removeLayer(routeLayer);
+                routeLayer = null;
+            }
+        }
+
+        /* ===============================
+           ERROR HANDLING
+        =============================== */
+        function handleLocationDenied() {
+            alert("❌ Location blocked.\\nClick 🔒 near URL → Location → Allow → Reload");
+        }
+
+        function showLocationError(error) {
+            let msg = "";
+            if (error.code === 1) msg = "❌ Permission denied for location";
+            else if (error.code === 2) msg = "📡 Location unavailable";
+            else if (error.code === 3) msg = "⏳ Location request timeout";
+            else msg = "⚠️ Unknown GPS error";
+
+            document.getElementById("riskBox").innerText = msg;
+            alert(msg);
+        }
+    </script>
+
+</body>
+
+</html>

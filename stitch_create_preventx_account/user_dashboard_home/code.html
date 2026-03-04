@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>PreventX - User Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#13ec5b",
+                        "background-light": "#f6f8f6",
+                        "background-dark": "#102216",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 font-display">
+<div class="relative flex min-h-screen w-full flex-col overflow-x-hidden">
+<!-- Header -->
+<header class="flex items-center justify-between px-4 pt-6 pb-2">
+<div class="flex items-center gap-3">
+<div class="flex h-10 w-10 items-center justify-center rounded-full bg-primary/20 text-primary">
+<span class="material-symbols-outlined">account_circle</span>
+</div>
+<div>
+<h1 class="text-lg font-bold leading-tight tracking-tight">PreventX</h1>
+<p class="text-xs text-slate-500 dark:text-primary/70">Safety Monitoring</p>
+</div>
+</div>
+<button class="flex h-10 w-10 items-center justify-center rounded-full bg-slate-200 dark:bg-primary/10 text-slate-700 dark:text-primary">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+</header>
+<!-- Main Action Section -->
+<main class="flex-1 flex flex-col pb-24">
+<div class="flex px-4 py-4">
+<button class="flex w-full cursor-pointer items-center justify-center gap-3 rounded-xl h-14 bg-primary text-background-dark font-bold transition-transform active:scale-95 shadow-lg shadow-primary/20">
+<span class="material-symbols-outlined">near_me</span>
+<span>Get Current Location</span>
+</button>
+</div>
+<!-- Risk Status Card -->
+<div class="px-4 py-2">
+<div class="flex flex-col rounded-xl overflow-hidden shadow-xl bg-slate-100 dark:bg-primary/5 border border-slate-200 dark:border-primary/10">
+<div class="flex flex-col gap-1 p-5">
+<div class="flex items-center justify-between">
+<p class="text-slate-500 dark:text-primary/60 text-sm font-medium uppercase tracking-wider">Safety Status</p>
+<span class="flex h-3 w-3 rounded-full bg-primary animate-pulse"></span>
+</div>
+<div class="flex items-baseline gap-2 mt-1">
+<h2 class="text-3xl font-extrabold text-slate-900 dark:text-slate-100 tracking-tight">Low Risk</h2>
+<span class="text-primary text-sm font-semibold">Live Updates</span>
+</div>
+<div class="mt-4 flex flex-col gap-3">
+<div class="h-2 w-full rounded-full bg-slate-300 dark:bg-primary/10">
+<div class="h-full w-1/4 rounded-full bg-primary"></div>
+</div>
+<div class="flex items-center justify-between">
+<p class="text-slate-600 dark:text-slate-400 text-sm">Your risk score is 12/100</p>
+<button class="rounded-lg bg-primary/20 dark:bg-primary/20 px-4 py-1.5 text-xs font-bold text-primary hover:bg-primary/30">
+                                    View Details
+                                </button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Map Header -->
+<div class="flex items-center justify-between px-4 pb-2 pt-6">
+<h3 class="text-lg font-bold tracking-tight">Nearby Risk Zones</h3>
+<span class="text-primary text-sm font-medium">3 Detected</span>
+</div>
+<!-- Interactive Map Section -->
+<div class="flex-1 px-4 mb-4">
+<div class="relative h-full min-h-[350px] w-full overflow-hidden rounded-2xl border border-slate-200 dark:border-primary/20 shadow-inner">
+<!-- Placeholder for Map -->
+<div class="absolute inset-0 bg-cover bg-center" data-alt="Detailed city map showing safety markers and heat zones" data-location="San Francisco" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBaWKbZISNhUAc7UoWPOS04-TDS6HRnB1yOtWMRrKjsrQ9DcK33It25xTQTq0ZDkEwFlm-ZupPfEaY26rQTnMOvHarDH11R10pR9X1W-oAUBJNQCL93wGyM-n3ePEsRUqCNYk9zIiT7FeWnUY1E8I8DJY7G7be9HjDPlqWF25FR3s7O0pdzXymDh5S66IyiN5HU4HPx26rva4ICzMyQzhrU9Yfm69dTID2Kq4R9NZkqKJV0M3pEIYh0aaP55QQWmjTv7d7ukvtFkjE");'>
+</div>
+<!-- Overlay UI on Map -->
+<div class="absolute top-4 right-4 flex flex-col gap-2">
+<button class="flex h-10 w-10 items-center justify-center rounded-lg bg-white/90 dark:bg-background-dark/90 text-slate-800 dark:text-slate-100 shadow-md backdrop-blur">
+<span class="material-symbols-outlined">layers</span>
+</button>
+<button class="flex h-10 w-10 items-center justify-center rounded-lg bg-white/90 dark:bg-background-dark/90 text-slate-800 dark:text-slate-100 shadow-md backdrop-blur">
+<span class="material-symbols-outlined">my_location</span>
+</button>
+</div>
+<!-- Legend -->
+<div class="absolute bottom-4 left-4 flex gap-2 rounded-lg bg-white/90 dark:bg-background-dark/90 p-2 text-[10px] font-bold uppercase tracking-widest text-slate-600 dark:text-slate-400 shadow-md backdrop-blur border border-slate-200 dark:border-primary/10">
+<div class="flex items-center gap-1">
+<span class="h-2 w-2 rounded-full bg-primary"></span> Safe
+                        </div>
+<div class="flex items-center gap-1">
+<span class="h-2 w-2 rounded-full bg-yellow-500"></span> Caution
+                        </div>
+<div class="flex items-center gap-1">
+<span class="h-2 w-2 rounded-full bg-red-500"></span> Hazard
+                        </div>
+</div>
+</div>
+</div>
+</main>
+<!-- Bottom Navigation Bar -->
+<nav class="fixed bottom-0 left-0 right-0 z-50 border-t border-slate-200 dark:border-primary/20 bg-white/80 dark:bg-background-dark/80 backdrop-blur-md px-6 pb-6 pt-3">
+<div class="mx-auto flex max-w-md justify-between">
+<a class="flex flex-col items-center gap-1 text-primary" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1">home</span>
+<span class="text-[10px] font-bold">Home</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-slate-400 dark:text-primary/40" href="#">
+<span class="material-symbols-outlined">description</span>
+<span class="text-[10px] font-bold">Reports</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-slate-400 dark:text-primary/40" href="#">
+<span class="material-symbols-outlined">warning</span>
+<span class="text-[10px] font-bold">Alerts</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-slate-400 dark:text-primary/40" href="#">
+<span class="material-symbols-outlined">person</span>
+<span class="text-[10px] font-bold">Profile</span>
+</a>
+</div>
+</nav>
+</div>
+</body></html>

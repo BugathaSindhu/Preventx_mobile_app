@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>PreventX Signup</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+        rel="stylesheet" />
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#13ec5b",
+                        "background-light": "#f6f8f6",
+                        "background-dark": "#102216",
+                    },
+                    fontFamily: {
+                        "display": ["Inter"]
+                    }
+                },
+            },
+        }
+    </script>
+</head>
+
+<body
+    class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 antialiased overflow-x-hidden">
+    <div class="relative flex min-h-screen w-full flex-col pt-8 pb-8">
+        <!-- Header / Logo Area -->
+        <header class="flex flex-col items-center pb-6 px-6">
+            <div class="flex items-center justify-center bg-primary/20 p-4 rounded-xl mb-4">
+                <span class="material-symbols-outlined text-primary text-5xl">person_add</span>
+            </div>
+            <h2 class="text-slate-900 dark:text-slate-100 text-3xl font-bold leading-tight tracking-tight">PreventX</h2>
+            <p class="text-slate-500 dark:text-slate-400 text-sm mt-1">Create an account to continue</p>
+        </header>
+
+        {% if error %}
+        <div class="px-6 mb-4 max-w-md mx-auto w-full">
+            <div class="bg-red-500/10 border border-red-500/20 text-red-500 px-4 py-3 rounded-lg text-sm text-center">
+                {{ error }}
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Signup Form -->
+        <form method="POST" class="flex flex-col gap-5 px-6 pb-12 flex-1 max-w-md mx-auto w-full">
+            <div class="flex flex-col gap-2">
+                <label class="text-sm font-medium text-slate-700 dark:text-slate-300">Full Name</label>
+                <div class="relative group">
+                    <span
+                        class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary transition-colors">person</span>
+                    <input name="name"
+                        class="form-input w-full pl-12 pr-4 h-14 rounded-lg border-slate-200 dark:border-primary/20 bg-white dark:bg-primary/5 text-slate-900 dark:text-white placeholder-slate-400 focus:ring-1 focus:ring-primary focus:border-primary transition-all"
+                        placeholder="John Doe" type="text" required />
+                </div>
+            </div>
+
+            <div class="flex flex-col gap-2">
+                <label class="text-sm font-medium text-slate-700 dark:text-slate-300">Email Address</label>
+                <div class="relative group">
+                    <span
+                        class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary transition-colors">mail</span>
+                    <input name="email"
+                        class="form-input w-full pl-12 pr-4 h-14 rounded-lg border-slate-200 dark:border-primary/20 bg-white dark:bg-primary/5 text-slate-900 dark:text-white placeholder-slate-400 focus:ring-1 focus:ring-primary focus:border-primary transition-all"
+                        placeholder="name@company.com" type="email" required />
+                </div>
+            </div>
+
+            <div class="flex flex-col gap-2">
+                <label class="text-sm font-medium text-slate-700 dark:text-slate-300">Phone Number</label>
+                <div class="relative group">
+                    <span
+                        class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary transition-colors">call</span>
+                    <input name="phone"
+                        class="form-input w-full pl-12 pr-4 h-14 rounded-lg border-slate-200 dark:border-primary/20 bg-white dark:bg-primary/5 text-slate-900 dark:text-white placeholder-slate-400 focus:ring-1 focus:ring-primary focus:border-primary transition-all"
+                        placeholder="+91XXXXXXXXXX" type="text" pattern="^\+91[0-9]{10}$"
+                        title="Enter phone number in +91XXXXXXXXXX format" required />
+                </div>
+            </div>
+
+            <div class="flex flex-col gap-2">
+                <label class="text-sm font-medium text-slate-700 dark:text-slate-300">Password</label>
+                <div class="relative group">
+                    <span
+                        class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary transition-colors">lock</span>
+                    <input name="password"
+                        class="form-input w-full pl-12 pr-12 h-14 rounded-lg border-slate-200 dark:border-primary/20 bg-white dark:bg-primary/5 text-slate-900 dark:text-white placeholder-slate-400 focus:ring-1 focus:ring-primary focus:border-primary transition-all"
+                        placeholder="••••••••" type="password" required />
+                </div>
+            </div>
+
+            <div class="flex flex-col gap-2">
+                <label class="text-sm font-medium text-slate-700 dark:text-slate-300">Role</label>
+                <div class="relative group">
+                    <span
+                        class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary transition-colors">badge</span>
+                    <select name="role"
+                        class="form-select w-full pl-12 pr-4 h-14 rounded-lg border-slate-200 dark:border-primary/20 bg-white dark:bg-primary/5 text-slate-900 dark:text-white focus:ring-1 focus:ring-primary focus:border-primary transition-all pb-1"
+                        required>
+                        <option value="user" class="text-black">User</option>
+                        <option value="admin" class="text-black">Admin</option>
+                    </select>
+                </div>
+            </div>
+
+            <button type="submit"
+                class="w-full h-14 bg-primary hover:bg-primary/90 text-background-dark font-bold rounded-lg transition-all mt-4 flex items-center justify-center gap-2">
+                Create Account
+                <span class="material-symbols-outlined">arrow_forward</span>
+            </button>
+        </form>
+
+        <!-- Footer -->
+        <footer class="p-6 text-center mt-auto">
+            <p class="text-sm text-slate-500 dark:text-slate-400">
+                Already have an account?
+                <a href="/login" class="text-primary font-bold ml-1 hover:underline">Login</a>
+            </p>
+        </footer>
+    </div>
+</body>
+
+</html>
