@@ -171,6 +171,25 @@ export default function PlacePredictionScreen({ navigation }) {
                     showsUserLocation={true}
                     showsMyLocationButton={false}
                 >
+                    {allHotspots.map((spot, index) => {
+                        const isHighRisk = spot.risk_score > 10000;
+                        const rColor = isHighRisk ? '#ff4444' : '#ff8c00'; // Red for high, Orange otherwise
+
+                        return (
+                            <Marker
+                                key={`pred-hotspot-${index}`}
+                                coordinate={{ latitude: spot.latitude, longitude: spot.longitude }}
+                            >
+                                <View style={styles.markerWrapper}>
+                                    <View style={[styles.markerHalo, { backgroundColor: rColor + '40' }]} />
+                                    <View style={[styles.markerCore, { backgroundColor: rColor }]}>
+                                        <MaterialCommunityIcons name="alert" size={16} color="#fff" />
+                                    </View>
+                                </View>
+                            </Marker>
+                        )
+                    })}
+
                     {prediction && (
                         <Marker coordinate={{ latitude: prediction.latitude, longitude: prediction.longitude }}>
                             <View style={styles.targetMarker}>
@@ -291,6 +310,10 @@ const styles = StyleSheet.create({
 
     mapWrap: { flex: 1, position: 'relative' },
     map: { ...StyleSheet.absoluteFillObject },
+
+    markerWrapper: { alignItems: 'center', justifyContent: 'center', width: 60, height: 60 },
+    markerHalo: { position: 'absolute', width: 50, height: 50, borderRadius: 25 },
+    markerCore: { width: 28, height: 28, borderRadius: 14, alignItems: 'center', justifyContent: 'center', borderWidth: 2, borderColor: '#fff' },
 
     targetMarker: { width: 32, height: 32, borderRadius: 16, backgroundColor: '#fff', alignItems: 'center', justifyContent: 'center', shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.3, shadowRadius: 4, elevation: 5 },
 
