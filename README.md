@@ -1,4 +1,4 @@
-# 🚦 AI-Based Traffic Accident Prediction & Hotspot Detection System
+# 🚦 AI-Based Accident Prediction & Hotspot Detection System
 
 ## 📌 Project Overview
 
