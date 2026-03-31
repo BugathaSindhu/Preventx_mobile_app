@@ -2,7 +2,7 @@ import axios from 'axios';
 import { Platform } from 'react-native';
 
 // Using public locatunnel to bypass strict local Wi-Fi firewalls
-const BASE_URL = 'https://cool-buckets-bow.loca.lt/api/mobile';
+const BASE_URL = ' https://cold-brooms-build.loca.lt/api/mobile';
 
 const api = axios.create({
   baseURL: BASE_URL,
