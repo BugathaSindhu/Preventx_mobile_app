@@ -4,6 +4,9 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { AuthContext } from '../components/AuthContext';
 import { predictionService } from '../api';
 import * as Location from 'expo-location';
+import * as Notifications from 'expo-notifications';
+import { saveHotspotsToCache } from '../api/hotspotsCache';
+import { BACKGROUND_HOTSPOT_TASK } from '../BackgroundTask';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 // Haversine formula to calculate distance in meters
@@ -35,6 +38,7 @@ export default function DashboardScreen({ navigation }) {
             .then(res => {
                 if (res.success && res.hotspots) {
                     hotspotsRef.current = res.hotspots;
+                    saveHotspotsToCache(res.hotspots);
                 }
             })
             .catch(err => console.log('Error fetching hotspots for tracking:', err));
@@ -55,6 +59,17 @@ export default function DashboardScreen({ navigation }) {
                 return;
             }
 
+            // Request background tracking permissions
+            let bgStatus = await Location.requestBackgroundPermissionsAsync();
+            
+            // Ask for notification permissions if they haven't been granted
+            const { status: existingStatus } = await Notifications.getPermissionsAsync();
+            let finalStatus = existingStatus;
+            if (existingStatus !== 'granted') {
+                const { status: newStatus } = await Notifications.requestPermissionsAsync();
+                finalStatus = newStatus;
+            }
+
             // Initial manual location
             let loc = await Location.getCurrentPositionAsync({});
             setLocation(loc);
@@ -71,6 +86,20 @@ export default function DashboardScreen({ navigation }) {
                     checkHotspotProximity(newLoc.coords.latitude, newLoc.coords.longitude);
                 }
             );
+
+            // Register background task if granted
+            if (bgStatus.status === 'granted') {
+                await Location.startLocationUpdatesAsync(BACKGROUND_HOTSPOT_TASK, {
+                    accuracy: Location.Accuracy.Balanced,
+                    timeInterval: 15000,
+                    distanceInterval: 50,
+                    foregroundService: {
+                        notificationTitle: "Background location is on",
+                        notificationBody: "Monitoring for safety hotspots",
+                        notificationColor: "#13ec5b",
+                    },
+                });
+            }
         };
 
         startTracking();

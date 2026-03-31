@@ -14,15 +14,15 @@ const server = http.createServer((req, res) => {
         proxyRes.pipe(res, { end: true });
     });
 
-    req.pipe(proxyReq, { end: true });
-
-    proxyReq.on('error', (e) => {
-        console.error(`Problem with request: ${e.message}`);
+    proxyReq.on('error', (err) => {
+        console.error('Proxy error:', err);
         res.writeHead(500);
         res.end('Proxy error');
     });
+
+    req.pipe(proxyReq, { end: true });
 });
 
-server.listen(8082, '0.0.0.0', () => {
-    console.log('Native proxy running on 0.0.0.0:8082 -> 127.0.0.1:5000');
+server.listen(8083, '0.0.0.0', () => {
+    console.log('Native proxy running on 0.0.0.0:8083 -> 127.0.0.1:5000');
 });

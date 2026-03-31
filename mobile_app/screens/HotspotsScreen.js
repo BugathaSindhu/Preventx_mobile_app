@@ -3,6 +3,9 @@ import { View, Text, StyleSheet, ActivityIndicator, Alert, TouchableOpacity, Tex
 import { SafeAreaView } from 'react-native-safe-area-context';
 import MapView, { Marker, Polyline } from 'react-native-maps';
 import * as Location from 'expo-location';
+import * as Notifications from 'expo-notifications';
+import { saveHotspotsToCache } from '../api/hotspotsCache';
+import { BACKGROUND_HOTSPOT_TASK } from '../BackgroundTask';
 import { AuthContext } from '../components/AuthContext';
 import { predictionService } from '../api';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -47,6 +50,7 @@ export default function HotspotsScreen({ navigation }) {
                 const res = await predictionService.getHotspots();
                 if (res.success && res.hotspots) {
                     setHotspots(res.hotspots);
+                    saveHotspotsToCache(res.hotspots);
                 }
             } catch (error) {
                 Alert.alert('Error', 'Failed to load hotspots');
@@ -63,6 +67,13 @@ export default function HotspotsScreen({ navigation }) {
             const { status } = await Location.requestForegroundPermissionsAsync();
             if (status !== 'granted') return;
 
+            let bgStatus = await Location.requestBackgroundPermissionsAsync();
+            
+            const { status: existingStatus } = await Notifications.getPermissionsAsync();
+            if (existingStatus !== 'granted') {
+                await Notifications.requestPermissionsAsync();
+            }
+
             let loc = await Location.getCurrentPositionAsync({});
             setLocation(loc.coords);
 
@@ -74,6 +85,19 @@ export default function HotspotsScreen({ navigation }) {
                     updateNearestHotspot(newLoc.coords.latitude, newLoc.coords.longitude);
                 }
             );
+
+            if (bgStatus.status === 'granted') {
+                await Location.startLocationUpdatesAsync(BACKGROUND_HOTSPOT_TASK, {
+                    accuracy: Location.Accuracy.Balanced,
+                    timeInterval: 15000,
+                    distanceInterval: 50,
+                    foregroundService: {
+                        notificationTitle: "Background location is on",
+                        notificationBody: "Monitoring for safety hotspots",
+                        notificationColor: "#13ec5b",
+                    },
+                });
+            }
         })();
 
         return () => { if (locationSub) locationSub.remove(); };
