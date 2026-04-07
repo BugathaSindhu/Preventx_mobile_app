@@ -43,6 +43,37 @@ def init_db():
             role TEXT
         )
     """)
+    # Add Gamification Columns if missing
+    try:
+        cur.execute("ALTER TABLE users ADD COLUMN points INTEGER DEFAULT 0")
+    except sqlite3.OperationalError:
+        pass
+    try:
+        cur.execute("ALTER TABLE users ADD COLUMN streak INTEGER DEFAULT 0")
+    except sqlite3.OperationalError:
+        pass
+
+    # Create Trips Table
+    cur.execute("""
+        CREATE TABLE IF NOT EXISTS trips (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            email TEXT,
+            duration INTEGER,
+            avg_risk REAL,
+            alerts INTEGER,
+            points_earned INTEGER,
+            timestamp TEXT
+        )
+    """)
+    # Create Badges Table
+    cur.execute("""
+        CREATE TABLE IF NOT EXISTS user_badges (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            email TEXT,
+            badge_name TEXT,
+            timestamp TEXT
+        )
+    """)
     conn.commit()
     conn.close()
 
@@ -807,6 +838,126 @@ def mobile_analytics():
         })
     except Exception as e:
         print("Mobile Analytics Error:", e)
+        return jsonify({"success": False, "error": str(e)}), 500
+
+# ===============================
+# GAMIFICATION API ROUTES
+# ===============================
+@app.route("/api/mobile/trip-complete", methods=["POST"])
+def complete_trip():
+    try:
+        data = request.get_json()
+        email = data.get("email")
+        duration = int(data.get("duration", 0))  # in minutes
+        avg_risk = float(data.get("avg_risk", 0))
+        alerts = int(data.get("alerts", 0))
+
+        if not email:
+            return jsonify({"success": False, "error": "Email is required"}), 400
+
+        conn = sqlite3.connect("users.db")
+        cur = conn.cursor()
+
+        # Calculate Points
+        # Base points for driving 1 minute = 10 points
+        base_points = duration * 10
+        # Penalty for alerts = 20 points per alert (avoid negative)
+        alert_penalty = alerts * 20
+        
+        points_earned = max(5, base_points - alert_penalty) # At least 5 points for completing a trip
+        
+        # Grant Badges
+        new_badges = []
+        cur.execute("SELECT badge_name FROM user_badges WHERE email=?", (email,))
+        existing_badges = [row[0] for row in cur.fetchall()]
+
+        if duration >= 10 and alerts == 0 and "Safe Driver" not in existing_badges:
+            new_badges.append("Safe Driver")
+            cur.execute("INSERT INTO user_badges (email, badge_name, timestamp) VALUES (?, ?, ?)", (email, "Safe Driver", datetime.now().strftime("%Y-%m-%d %H:%M:%S")))
+        
+        cur.execute("SELECT points, streak FROM users WHERE email=?", (email,))
+        user_row = cur.fetchone()
+        
+        if user_row:
+            current_points = int(user_row[0] or 0)
+            current_streak = int(user_row[1] or 0)
+            
+            new_points = current_points + points_earned
+            new_streak = current_streak + 1
+            
+            if new_points > 1000 and "Pro Driver" not in existing_badges:
+                new_badges.append("Pro Driver")
+                cur.execute("INSERT INTO user_badges (email, badge_name, timestamp) VALUES (?, ?, ?)", (email, "Pro Driver", datetime.now().strftime("%Y-%m-%d %H:%M:%S")))
+
+            cur.execute("UPDATE users SET points=?, streak=? WHERE email=?", (new_points, new_streak, email))
+            cur.execute("INSERT INTO trips (email, duration, avg_risk, alerts, points_earned, timestamp) VALUES (?, ?, ?, ?, ?, ?)",
+                        (email, duration, avg_risk, alerts, points_earned, datetime.now().strftime("%Y-%m-%d %H:%M:%S")))
+            conn.commit()
+            conn.close()
+
+            return jsonify({
+                "success": True, 
+                "points_earned": points_earned, 
+                "new_points_total": new_points,
+                "new_badges": new_badges
+            })
+        else:
+            conn.close()
+            return jsonify({"success": False, "error": "User not found"}), 404
+            
+    except Exception as e:
+        print("Trip Complete Error:", e)
+        return jsonify({"success": False, "error": str(e)}), 500
+
+@app.route("/api/mobile/leaderboard", methods=["GET"])
+def get_leaderboard():
+    try:
+        conn = sqlite3.connect("users.db")
+        cur = conn.cursor()
+        cur.execute("SELECT name, email, role, points FROM users ORDER BY points DESC LIMIT 50")
+        users = [{"name": row[0], "email": row[1], "role": row[2], "points": row[3] or 0} for row in cur.fetchall()]
+        conn.close()
+        return jsonify({"success": True, "leaderboard": users})
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
+
+@app.route("/api/mobile/user-stats", methods=["POST"])
+def get_user_stats():
+    try:
+        data = request.get_json()
+        email = data.get("email")
+        if not email:
+            return jsonify({"success": False, "error": "Email is required"}), 400
+        
+        conn = sqlite3.connect("users.db")
+        cur = conn.cursor()
+        
+        cur.execute("SELECT points, streak FROM users WHERE email=?", (email,))
+        user_row = cur.fetchone()
+        if not user_row:
+            return jsonify({"success": False, "error": "User not found"}), 404
+            
+        cur.execute("SELECT badge_name FROM user_badges WHERE email=?", (email,))
+        badges = [row[0] for row in cur.fetchall()]
+        
+        cur.execute("SELECT duration, avg_risk, alerts, points_earned, timestamp FROM trips WHERE email=? ORDER BY id DESC LIMIT 10", (email,))
+        trips = [{"duration": row[0], "avg_risk": row[1], "alerts": row[2], "points_earned": row[3], "timestamp": row[4]} for row in cur.fetchall()]
+        
+        # Calculate rank
+        cur.execute("SELECT COUNT(*) FROM users WHERE points > (SELECT points FROM users WHERE email=?)", (email,))
+        rank = cur.fetchone()[0] + 1
+        
+        conn.close()
+        return jsonify({
+            "success": True,
+            "points": user_row[0] or 0,
+            "streak": user_row[1] or 0,
+            "badges": badges,
+            "trips": trips,
+            "rank": rank
+        })
+    except Exception as e:
+        print("User Stats Error:", e)
         return jsonify({"success": False, "error": str(e)}), 500
 
 # ===============================

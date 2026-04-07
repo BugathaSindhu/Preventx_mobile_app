@@ -1,14 +1,15 @@
 import axios from 'axios';
 import { Platform } from 'react-native';
 
-// Using public locatunnel to bypass strict local Wi-Fi firewalls
-const BASE_URL = ' https://cold-brooms-build.loca.lt/api/mobile';
+// Using local network IP and native proxy instead of public localtunnel to ensure reliability
+const BASE_URL = 'https://helmless-subungual-lakesha.ngrok-free.dev/api/mobile';
 
 const api = axios.create({
   baseURL: BASE_URL,
   headers: {
     'Content-Type': 'application/json',
-    'Bypass-Tunnel-Reminder': 'true' // Skip localtunnel warning page
+    'Bypass-Tunnel-Reminder': 'true', // Skip localtunnel warning page
+    'ngrok-skip-browser-warning': 'true' // Skip ngrok warning page
   },
 });
 
