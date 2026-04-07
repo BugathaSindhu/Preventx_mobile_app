@@ -15,7 +15,7 @@ app = Flask(__name__)
 app.secret_key = "supersecretkey"
 CORS(app)
 
-BASE_PATH = r"C:/Users/bugat/Downloads/traffic_accident_prevention"
+BASE_PATH = os.path.dirname(os.path.abspath(__file__))
 
 DATASET_PATH = os.path.join(
     BASE_PATH,
