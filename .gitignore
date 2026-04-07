@@ -43,7 +43,7 @@ venv/
 # -----------------------------
 # ML models
 # -----------------------------
-*.pkl
+# *.pkl (Commented out to deploy models to Render)
 
 # -----------------------------
 # Logs
