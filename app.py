@@ -554,30 +554,44 @@ def predict_place():
 def mobile_signup():
     try:
         data = request.get_json()
+        email = data.get("email", "").strip().lower()
+        password = data.get("password")
+        name = data.get("name", "User")
+        phone = data.get("phone", "")
+        role = data.get("role", "user")
+
         conn = sqlite3.connect("users.db")
         cur = conn.cursor()
-        cur.execute(
-            "INSERT INTO users (name, email, phone, password, role) VALUES (?, ?, ?, ?, ?)",
-            (
-                data.get("name"),
-                data.get("email"),
-                data.get("phone"),
-                data.get("password"),
-                data.get("role", "user") # Default to user role
+        
+        # Check if user already exists
+        cur.execute("SELECT id FROM users WHERE email=?", (email,))
+        existing_user = cur.fetchone()
+        
+        if existing_user:
+            # Update password and details for existing user
+            cur.execute(
+                "UPDATE users SET name=?, phone=?, password=?, role=? WHERE email=?",
+                (name, phone, password, role, email)
             )
-        )
+        else:
+            # Insert new user
+            cur.execute(
+                "INSERT INTO users (name, email, phone, password, role) VALUES (?, ?, ?, ?, ?)",
+                (name, email, phone, password, role)
+            )
+            
         conn.commit()
         conn.close()
         return jsonify({"success": True, "message": "User registered successfully."})
     except Exception as e:
         print("Mobile Signup Error:", e)
-        return jsonify({"success": False, "error": "Email already exists or invalid data."}), 400
+        return jsonify({"success": False, "error": f"Database error: {str(e)}"}), 500
 
 @app.route("/api/mobile/login", methods=["POST"])
 def mobile_login():
     try:
         data = request.get_json()
-        email = data.get("email")
+        email = data.get("email", "").strip().lower()
         password = data.get("password")
 
         conn = sqlite3.connect("users.db")
