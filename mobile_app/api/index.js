@@ -1,8 +1,7 @@
 import axios from 'axios';
 import { Platform } from 'react-native';
 
-// Using local network IP and native proxy instead of public localtunnel to ensure reliability
-const BASE_URL = 'https://helmless-subungual-lakesha.ngrok-free.dev/api/mobile';
+const BASE_URL = 'https://preventx-mobile-app.onrender.com/api/mobile';
 
 const api = axios.create({
   baseURL: BASE_URL,
